@@ -1,15 +1,28 @@
-import React from 'react'
-import { Button } from '@/components/ui/button'
-import SearchBar from './SearchBar'
+import React from "react";
+import { Button } from "@/components/ui/button";
+import SearchBar from "./SearchBar";
+import { auth } from "@/auth";
+import SignIn from "./SignIn";
+import SignOut from "./SignOut";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const session = await auth();
+
   return (
-    <nav className='navbar'>
-      <h3 className='navbar-title'>MovieVault</h3>
-      <SearchBar />
-      <Button className='bookmark-btn'>Bookmarks</Button>
-    </nav>
-  )
-}
+    <nav className="navbar flex justify-between items-center p-4">
+      <h3 className="navbar-title text-2xl font-bold">MovieVault</h3>
 
-export default Navbar
+      <SearchBar />
+
+      <div className="flex gap-4">
+        <Button className="bookmark-btn" variant="secondary">
+          Bookmarks
+        </Button>
+
+        {session ? <SignOut /> : <SignIn />}
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

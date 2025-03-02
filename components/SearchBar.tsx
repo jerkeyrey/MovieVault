@@ -2,35 +2,48 @@
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
+import { Search } from "lucide-react";
 
-const SearchBar = ({ onSearch }: { onSearch: (movies: any[]) => void }) => {
+const SearchBar = ({
+  onSearch,
+}: {
+  onSearch: (movies: any[], searchTerm: string) => void;
+}) => {
   const [search, setSearch] = useState("");
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-  };
+  const handleSearch = async () => {
+    if (!search.trim()) return;
 
-  const getData = async () => {
     try {
-      const response = await fetch(`/api/movies?s=${search}`);
+      const response = await fetch(
+        `/api/movies?s=${encodeURIComponent(search)}`
+      );
       const data = await response.json();
-      onSearch(data.Search || []);
+      if (data.Search && Array.isArray(data.Search)) {
+        onSearch(data.Search, search); // Pass search term here
+      }
     } catch (error) {
       console.error("Error fetching movies:", error);
+      onSearch([], search);
     }
   };
 
   return (
-    <div className="search-container">
+    <div className="relative w-full max-w-sm">
       <Input
         type="text"
-        placeholder="Search.."
-        className="search-input"
+        placeholder="Search movies..."
+        className="pr-12 rounded-lg border border-gray-600"
         value={search}
-        onChange={handleSearch}
+        onChange={(e) => setSearch(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
       />
-      <Button className="search-button" onClick={getData}>
-        Search
+      <Button
+        onClick={handleSearch}
+        className="absolute right-0 top-0 h-full px-3 rounded-l-none"
+        variant="ghost"
+      >
+        <Search className="h-4 w-4" />
       </Button>
     </div>
   );

@@ -1,11 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { fetchMovies } from "@/lib/omdb";
+import ClientHome from "@/components/ClientHome";
 
-
-export default function Home() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-700">
-      <h1 className="text-3xl font-bold ">MovieVault</h1>
-      <Button>Lesgo</Button>
-    </div>
-  );
+export default async function HomePage() {
+  const initialMovies = await fetchMovies("rocky"); // Show recent movies by default
+  return <ClientHome initialMovies={initialMovies} />;
 }

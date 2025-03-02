@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 
-const SearchBar = () => {
+const SearchBar = ({ onSearch }: { onSearch: (movies: any[]) => void }) => {
   const [search, setSearch] = useState("");
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -12,36 +12,27 @@ const SearchBar = () => {
 
   const getData = async () => {
     try {
-      const response = await fetch(
-        `http://www.omdbapi.com/?apikey=${process.env.NEXT_PUBLIC_OMDB_API_KEY}&s=${search}`
-      );
-
-      if(!response.ok) {
-        throw new Error('Failed to fetch movies');
-      }
-
+      const response = await fetch(`/api/movies?s=${search}`);
       const data = await response.json();
-      console.log(data);
+      onSearch(data.Search || []);
     } catch (error) {
-      console.error("Error fetching data: ", error);
+      console.error("Error fetching movies:", error);
     }
   };
 
   return (
-    <>
-      <div className="search-container">
-        <Input
-          type="text"
-          placeholder="Search.."
-          className="search-input"
-          value={search}
-          onChange={handleSearch}
-        />
-        <Button className="search-button" onClick={getData}>
-          Search
-        </Button>
-      </div>
-    </>
+    <div className="search-container">
+      <Input
+        type="text"
+        placeholder="Search.."
+        className="search-input"
+        value={search}
+        onChange={handleSearch}
+      />
+      <Button className="search-button" onClick={getData}>
+        Search
+      </Button>
+    </div>
   );
 };
 

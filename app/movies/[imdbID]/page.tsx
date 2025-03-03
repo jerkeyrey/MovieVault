@@ -2,8 +2,8 @@ import { fetchMovieDetails } from "@/lib/omdb";
 import { Button } from "@/components/ui/button";
 import { PrismaClient } from "@prisma/client";
 import { BookmarkPlus } from "lucide-react";
-import { toast } from 'sonner';
-import BookmarkButton from '@/components/BookmarkButton';
+import { toast } from "sonner";
+import BookmarkButton from "@/components/BookmarkButton";
 
 const prisma = new PrismaClient();
 
@@ -25,11 +25,11 @@ export default async function MovieDetails({
 
     try {
       await prisma.bookmark.create({
-        data: { userId: 'default-user', movieId },
+        data: { userId: "default-user", movieId },
       });
-      toast.success('Added to bookmarks');
+      toast.success("Added to bookmarks");
     } catch (error) {
-      toast.error('Already in bookmarks');
+      toast.error("Already in bookmarks");
     }
   }
 
@@ -59,7 +59,9 @@ export default async function MovieDetails({
               <span className="w-1 h-1 bg-gray-300 rounded-full" />
               <span>{movie.Runtime}</span>
             </div>
-            <p className="text-gray-300 mb-8 text-lg leading-relaxed">{movie.Plot}</p>
+            <p className="text-gray-300 mb-8 text-lg leading-relaxed">
+              {movie.Plot}
+            </p>
             <div className="flex gap-4 mb-8">
               <BookmarkButton movieId={movie.imdbID} />
               <div className="flex items-center bg-gray-900 px-4 py-2 rounded">

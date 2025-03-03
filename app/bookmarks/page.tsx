@@ -1,15 +1,18 @@
-import { PrismaClient } from "@prisma/client";
 import { fetchMovieDetails } from "@/lib/omdb";
 import MovieCard from "@/components/MovieCard";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { BookmarkX } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
-
-export default async function Bookmarks() {
+export default async function Bookmarks({
+  searchParams,
+}: {
+  searchParams: { userId?: string };
+}) {
+  const userId = searchParams.userId || "default-user"; // Use query param
   const bookmarks = await prisma.bookmark.findMany({
-    where: { userId: "default-user" },
+    where: { userId },
   });
 
   const movies = await Promise.all(
@@ -22,16 +25,13 @@ export default async function Bookmarks() {
   const validMovies = movies.filter((movie) => movie !== null);
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header Section */}
-      <div className="relative h-[40vh] w-full bg-gradient-to-b from-black/60 via-black/50 to-black flex items-center justify-center">
+    <div className="min-h-screen bg-black text-white pt-20">
+      <div className="relative w-full bg-gradient-to-b from-black/60 via-black/50 to-black py-16">
         <div className="text-center">
           <h1 className="text-5xl sm:text-6xl font-bold">Your Bookmarks</h1>
         </div>
       </div>
-
-      {/* Content Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {validMovies.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[30vh] space-y-4">
             <BookmarkX className="h-16 w-16 text-gray-400" />

@@ -2,6 +2,8 @@
 
 A modern movie discovery platform built with Next.js 14, featuring real-time search, bookmarking, and detailed movie information.
 
+🌐 **[Live Demo](https://movie-vault-jerkeyray.vercel.app)**
+
 ## Features
 
 - 🔍 Real-time movie search with OMDB API integration

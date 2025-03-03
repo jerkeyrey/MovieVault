@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MovieVault 🎬
+
+A modern movie discovery platform built with Next.js 14, featuring real-time search, bookmarking, and detailed movie information.
+
+## Features
+
+- 🔍 Real-time movie search with OMDB API integration
+- 🎯 Advanced filtering and sorting options
+- 📚 Personal bookmark system
+- 🔐 GitHub authentication
+- 🎨 Modern UI with Tailwind CSS
+- 🖼️ Optimized image loading with next/image
+- 🚀 Server-side rendering and API routes
+- 📱 Fully responsive design
+
+## Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Styling:** Tailwind CSS
+- **UI Components:** shadcn/ui
+- **Authentication:** NextAuth.js
+- **Database:** Prisma with PostgreSQL
+- **API Integration:** OMDB API
+- **Icons:** Lucide Icons
+- **Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/MovieVault.git
+cd MovieVault
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Set up environment variables:
+
+```bash
+# Create a .env.local file with:
+OMDB_API_KEY=your_omdb_api_key
+AUTH_GITHUB_ID=your_github_client_id
+AUTH_GITHUB_SECRET=your_github_client_secret
+AUTH_SECRET=your_auth_secret
+DATABASE_URL=your_database_url
+```
+
+4. Run database migrations:
+
+```bash
+npx prisma migrate dev
+```
+
+5. Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+movie_vault/
+├── app/              # Next.js app router pages
+├── components/       # Reusable components
+├── lib/             # Utility functions and API clients
+├── prisma/          # Database schema and migrations
+├── public/          # Static assets
+├── types/           # TypeScript type definitions
+└── styles/          # Global styles
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Key Features Explained
 
-## Learn More
+- **Movie Search:** Real-time search with debouncing and pagination
+- **Filtering System:** Sort by title, year, and more
+- **Bookmarking:** Save favorite movies with user authentication
+- **Responsive Design:** Optimal viewing on all device sizes
+- **Performance:** Optimized image loading and API caching
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -12,26 +12,43 @@ const SearchBar = ({
   onReset: () => void;
 }) => {
   const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSearch = async () => {
-    if (!search.trim()) return;
+    if (!search.trim()) {
+      onReset();
+      return;
+    }
 
+    setIsLoading(true);
     try {
       const response = await fetch(
         `/api/movies?s=${encodeURIComponent(search)}`
       );
       const data = await response.json();
       if (data.Search && Array.isArray(data.Search)) {
-        onSearch(data.Search, search); // Pass search term here
+        onSearch(data.Search, search);
       }
     } catch (error) {
       console.error("Error fetching movies:", error);
       onSearch([], search);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearch(value);
+
+    if (!value.trim()) {
+      handleReset();
     }
   };
 
   const handleReset = () => {
     setSearch("");
+    setIsLoading(false);
     onReset();
   };
 
@@ -42,7 +59,7 @@ const SearchBar = ({
         placeholder="Search for movies..."
         className="w-full h-14 pl-5 pr-24 rounded-lg bg-black/60 border-gray-600 text-lg placeholder:text-gray-400 focus:ring-white"
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={handleChange}
         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
       />
       <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-2">

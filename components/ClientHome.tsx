@@ -34,6 +34,7 @@ export default function ClientHome({
 
   const handleReset = () => {
     setMovies(initialMovies);
+    setDisplayedMovies(initialMovies);
     setCurrentSearch("");
     setCurrentPage(1);
   };
@@ -45,25 +46,28 @@ export default function ClientHome({
     try {
       const nextPage = currentPage + 1;
       const response = await fetch(
-        `/api/movies?s=${currentSearch}&page=${nextPage}`
+        `/api/movies?s=${encodeURIComponent(currentSearch)}&page=${nextPage}`
       );
       const data = await response.json();
 
       if (data.Search && Array.isArray(data.Search)) {
-        setMovies((prev) => [...prev, ...data.Search]);
+        const newMovies = [...movies, ...data.Search];
+        setMovies(newMovies);
+        setDisplayedMovies(newMovies); // Update displayed movies as well
         setCurrentPage(nextPage);
       }
     } catch (error) {
       console.error("Error loading more movies:", error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Hero Section */}
-      <div className="relative h-[70vh] w-full bg-gradient-to-b from-black/60 via-black/50 to-black flex items-center justify-center">
-        <div className="text-center px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+      <div className="relative h-[60vh] w-full bg-gradient-to-b from-black/60 via-black/50 to-black flex items-center justify-center pt-16">
+        <div className="text-center px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto -mt-20">
           <h1 className="text-5xl sm:text-6xl font-bold mb-6">
             Welcome to MovieVault
           </h1>
@@ -79,12 +83,14 @@ export default function ClientHome({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
         {movies.length > 0 ? (
           <>
-            <h2 className="text-2xl font-bold mb-6">
-              {currentSearch
-                ? `Search Results for "${currentSearch}"`
-                : "Popular Movies"}
-            </h2>
-            <MovieFilters movies={movies} onSort={setDisplayedMovies} />
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">
+                {currentSearch
+                  ? `Search Results for "${currentSearch}"`
+                  : "Popular Movies"}
+              </h2>
+              <MovieFilters movies={movies} onSort={setDisplayedMovies} />
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
               {displayedMovies.map((movie) => (
                 <Link key={movie.imdbID} href={`/movies/${movie.imdbID}`}>

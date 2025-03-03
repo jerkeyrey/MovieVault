@@ -51,7 +51,7 @@ export default function MovieFilters({ movies, onSort }: Props) {
   };
 
   return (
-    <div className="flex items-center justify-end gap-3 p-3 mb-4">
+    <div className="flex items-center justify-end gap-3 p-3">
       <Select value={sortBy} onValueChange={handleSort}>
         <SelectTrigger className="w-[150px] bg-gray-900/50 border-gray-700">
           <SelectValue placeholder="Sort by..." />
@@ -59,7 +59,7 @@ export default function MovieFilters({ movies, onSort }: Props) {
         <SelectContent className="bg-gray-900 text-white border-gray-800">
           <SelectItem value="title-asc">Title (A-Z)</SelectItem>
           <SelectItem value="title-desc">Title (Z-A)</SelectItem>
-          <SelectItem value="year-desc">Latest First</SelectItem>
+          <SelectItem value="year-desc">Newest First</SelectItem>
           <SelectItem value="year-asc">Oldest First</SelectItem>
         </SelectContent>
       </Select>

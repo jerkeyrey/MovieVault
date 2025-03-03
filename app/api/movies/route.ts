@@ -11,8 +11,15 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const movies = await fetchMovies(search, page);
-    return NextResponse.json({ Search: movies });
+    // Fetch two pages of results
+    const [page1, page2] = await Promise.all([
+      fetchMovies(search, 1),
+      fetchMovies(search, 2),
+    ]);
+
+    // Combine results and take first 18 items
+    const combinedResults = [...page1, ...page2].slice(0, 18);
+    return NextResponse.json({ Search: combinedResults });
   } catch (error) {
     console.error("Error fetching movies: ", error);
     return NextResponse.json({ Search: [] }, { status: 500 });

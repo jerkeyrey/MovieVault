@@ -1,37 +1,14 @@
 import { fetchMovieDetails } from "@/lib/omdb";
-import { Button } from "@/components/ui/button";
-import { PrismaClient } from "@prisma/client";
-import { BookmarkPlus } from "lucide-react";
-import { toast } from "sonner";
 import BookmarkButton from "@/components/BookmarkButton";
-
-const prisma = new PrismaClient();
 
 export default async function MovieDetails({
   params,
-  searchParams,
 }: {
   params: { imdbID: string };
-  searchParams: { userId?: string };
 }) {
   const movie = await fetchMovieDetails(params.imdbID);
+
   if (!movie) return <div>Movie not found</div>;
-
-  const userId = searchParams.userId || "default-user";
-
-  async function handleBookmark(formData: FormData) {
-    "use server";
-    const movieId = formData.get("movieId") as string;
-
-    try {
-      await prisma.bookmark.create({
-        data: { userId: "default-user", movieId },
-      });
-      toast.success("Added to bookmarks");
-    } catch (error) {
-      toast.error("Already in bookmarks");
-    }
-  }
 
   return (
     <div className="min-h-screen bg-black text-white">

@@ -11,19 +11,21 @@ import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: "MovieVault - Bookmarks",
   icons: {
-    icon: "/bookmark.ico", // Custom bookmark icon
+    icon: "/bookmark.ico",
   },
 };
 
 export default async function Bookmarks() {
   const session = await auth();
+  console.log("Session in bookmarks:", session); // Debug log
 
-  if (!session) {
-    redirect("/api/auth/signin?callbackUrl=/bookmarks");
+  if (!session?.user?.id) { // Ensure id exists
+    return redirect("/api/auth/signin?callbackUrl=/bookmarks");
   }
 
+  const userId = session.user.id; // Use id directly
   const bookmarks = await prisma.bookmark.findMany({
-    where: { userId: session.user.email },
+    where: { userId },
   });
 
   const movies = await Promise.all(
@@ -60,9 +62,7 @@ export default async function Bookmarks() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
             {validMovies.map((movie) => (
-              <Link key={movie.imdbID} href={`/movies/${movie.imdbID}`}>
-                <MovieCard movie={movie} />
-              </Link>
+              <MovieCard key={movie.imdbID} movie={movie} /> // Remove nested Link
             ))}
           </div>
         )}

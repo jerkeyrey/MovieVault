@@ -1,14 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth"; // Import from auth.ts
 
 export async function POST(req: NextRequest) {
+  const session = await auth();
+  if (!session || !session.user?.id) {
+    return NextResponse.json({ message: "Unauthorized - Please log in" }, { status: 401 });
+  }
+
   try {
     const { movieId } = await req.json();
+    const userId = session.user.id;
+
+    if (!movieId) {
+      return NextResponse.json({ message: "Missing movieId" }, { status: 400 });
+    }
 
     // Check for existing bookmark
     const existing = await prisma.bookmark.findFirst({
       where: {
-        userId: "default-user",
+        userId,
         movieId,
       },
     });
@@ -22,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     await prisma.bookmark.create({
       data: {
-        userId: "default-user",
+        userId,
         movieId,
       },
     });
@@ -34,4 +45,17 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+export async function GET(req: NextRequest) {
+  const session = await auth();
+  if (!session || !session.user?.id) {
+    return NextResponse.json({ message: "Unauthorized - Please log in" }, { status: 401 });
+  }
+
+  const userId = session.user.id;
+  const bookmarks = await prisma.bookmark.findMany({
+    where: { userId },
+  });
+  return NextResponse.json(bookmarks);
 }

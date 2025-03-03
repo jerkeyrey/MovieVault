@@ -4,6 +4,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { BookmarkX } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'MovieVault - Bookmarks',
+  icons: {
+    icon: '/bookmark.ico', // Custom bookmark icon
+  },
+};
 
 export default async function Bookmarks({
   searchParams,

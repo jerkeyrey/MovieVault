@@ -29,6 +29,12 @@ export default function ClientHome({
     setCurrentPage(1);
   };
 
+  const handleReset = () => {
+    setMovies(initialMovies);
+    setCurrentSearch("");
+    setCurrentPage(1);
+  };
+
   const loadMore = async () => {
     if (!currentSearch || isLoading) return;
 
@@ -62,7 +68,7 @@ export default function ClientHome({
             Discover and explore your favorite movies. Search from thousands of
             titles.
           </p>
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} onReset={handleReset} />
         </div>
       </div>
 

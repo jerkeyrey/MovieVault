@@ -1,9 +1,9 @@
-export async function fetchMovies(searchTerm: string, page: number = 1) {
+export async function fetchMovies(searchTerm: string, pageNum: number = 1) {
   const apiKey = process.env.OMDB_API_KEY;
   const response = await fetch(
     `https://www.omdbapi.com/?s=${encodeURIComponent(
       searchTerm
-    )}&page=${page}&apikey=${apiKey}`
+    )}&page=${pageNum}&apikey=${apiKey}`
   );
 
   if (!response.ok) {

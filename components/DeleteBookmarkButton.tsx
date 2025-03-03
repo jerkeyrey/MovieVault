@@ -18,7 +18,7 @@ export default function DeleteBookmarkButton({ movieId }: { movieId: string }) {
 
       toast.success("Bookmark removed");
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error("Failed to remove bookmark");
     }
   };

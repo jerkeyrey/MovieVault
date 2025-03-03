@@ -28,7 +28,7 @@ export default function FilteredMovieGrid({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      <MovieFilters movies={movies} onFilteredMovies={setFilteredMovies} />
+      <MovieFilters movies={movies} onSort={setFilteredMovies} />
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 pt-2">
         {filteredMovies.map((movie) => (
           <div key={movie.imdbID} className="relative group">

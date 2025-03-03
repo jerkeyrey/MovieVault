@@ -3,14 +3,14 @@ import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { Search, X } from "lucide-react";
+import type { Movie } from "@/types/movie";
 
-const SearchBar = ({
-  onSearch,
-  onReset,
-}: {
-  onSearch: (movies: any[], searchTerm: string) => void;
+interface SearchBarProps {
+  onSearch: (movies: Movie[], searchTerm: string) => void;
   onReset: () => void;
-}) => {
+}
+
+const SearchBar = ({ onSearch, onReset }: SearchBarProps) => {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -77,8 +77,13 @@ const SearchBar = ({
           onClick={handleSearch}
           className="h-10 px-4"
           variant="secondary"
+          disabled={isLoading}
         >
-          <Search className="h-5 w-5" />
+          {isLoading ? (
+            <div className="animate-spin h-5 w-5 border-2 border-white rounded-full border-t-transparent" />
+          ) : (
+            <Search className="h-5 w-5" />
+          )}
         </Button>
       </div>
     </div>

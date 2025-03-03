@@ -4,20 +4,21 @@ import { fetchMovies } from "@/lib/omdb";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("s");
-  const page = parseInt(searchParams.get("page") || "1");
 
   if (!search) {
     return NextResponse.json({ Search: [] });
   }
 
   try {
-    // Fetch two pages of results
+    const pageNum = parseInt(searchParams.get("page") || "1");
+    const startPage = pageNum === 1 ? 1 : pageNum * 2 - 1;
+
+    // Fetch two consecutive pages based on the requested page number
     const [page1, page2] = await Promise.all([
-      fetchMovies(search, 1),
-      fetchMovies(search, 2),
+      fetchMovies(search, startPage),
+      fetchMovies(search, startPage + 1),
     ]);
 
-    // Combine results and take first 18 items
     const combinedResults = [...page1, ...page2].slice(0, 18);
     return NextResponse.json({ Search: combinedResults });
   } catch (error) {

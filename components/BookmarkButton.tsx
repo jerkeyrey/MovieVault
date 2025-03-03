@@ -34,8 +34,9 @@ export default function BookmarkButton({ movieId }: { movieId: string }) {
 
       toast.success("Added to bookmarks");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to bookmark movie");
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to bookmark movie";
+      toast.error(errorMessage);
     }
   };
 

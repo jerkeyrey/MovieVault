@@ -20,13 +20,13 @@ interface Movie {
 
 interface Props {
   movies: Movie[];
-  onSort: (sortedMovies: Movie[]) => void;
+  onSort: (sortedMovies: Movie[] | ((prev: Movie[]) => Movie[])) => void;
 }
 
 export default function MovieFilters({ movies, onSort }: Props) {
   const [sortBy, setSortBy] = useState("");
 
-  const handleSort = (value: string) => {
+  const applySort = (value: string) => {
     setSortBy(value);
     const sorted = [...movies].sort((a, b) => {
       switch (value) {
@@ -52,7 +52,7 @@ export default function MovieFilters({ movies, onSort }: Props) {
 
   return (
     <div className="flex items-center justify-end gap-3 p-3">
-      <Select value={sortBy} onValueChange={handleSort}>
+      <Select value={sortBy} onValueChange={applySort}>
         <SelectTrigger className="w-[150px] bg-gray-900/50 border-gray-700">
           <SelectValue placeholder="Sort by..." />
         </SelectTrigger>

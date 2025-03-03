@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth"; // Import from auth.ts
+import { auth } from "@/auth";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
-  if (!session || !session.user?.id) {
+  if (!session?.user?.id) {
     return NextResponse.json(
       { message: "Unauthorized - Please log in" },
       { status: 401 }
@@ -19,12 +19,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Missing movieId" }, { status: 400 });
     }
 
-    // Check for existing bookmark
     const existing = await prisma.bookmark.findFirst({
-      where: {
-        userId,
-        movieId,
-      },
+      where: { userId, movieId },
     });
 
     if (existing) {
@@ -35,14 +31,12 @@ export async function POST(req: NextRequest) {
     }
 
     await prisma.bookmark.create({
-      data: {
-        userId,
-        movieId,
-      },
+      data: { userId, movieId },
     });
 
     return NextResponse.json({ message: "Bookmark added successfully" });
-  } catch (error) {
+  } catch (err) {
+    console.error("Bookmark creation failed:", err);
     return NextResponse.json(
       { message: "Failed to add bookmark" },
       { status: 500 }
@@ -50,9 +44,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await auth();
-  if (!session || !session.user?.id) {
+  if (!session?.user?.id) {
     return NextResponse.json(
       { message: "Unauthorized - Please log in" },
       { status: 401 }
@@ -84,13 +78,14 @@ export async function DELETE(req: NextRequest) {
       where: {
         userId_movieId: {
           userId: session.user.id,
-          movieId: movieId,
+          movieId,
         },
       },
     });
 
     return NextResponse.json({ message: "Bookmark deleted" });
-  } catch (error) {
+  } catch (err) {
+    console.error("Bookmark deletion failed:", err);
     return NextResponse.json(
       { message: "Failed to delete bookmark" },
       { status: 500 }

@@ -12,6 +12,7 @@ interface Movie {
   Title: string;
   Year: string;
   Poster: string;
+  Type?: string;
 }
 
 export default function ClientHome({

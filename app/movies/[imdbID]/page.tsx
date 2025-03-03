@@ -2,6 +2,8 @@ import { fetchMovieDetails } from "@/lib/omdb";
 import { Button } from "@/components/ui/button";
 import { PrismaClient } from "@prisma/client";
 import { BookmarkPlus } from "lucide-react";
+import { toast } from 'sonner';
+import BookmarkButton from '@/components/BookmarkButton';
 
 const prisma = new PrismaClient();
 
@@ -21,26 +23,14 @@ export default async function MovieDetails({
     "use server";
     const movieId = formData.get("movieId") as string;
 
-    // Fetch existing bookmarks for this user
-    const existingBookmarks = await prisma.bookmark.findMany({
-      where: { userId },
-    });
-
-    // Option 1: Unique Movies Check
-    const isDuplicate = existingBookmarks.some((b) => b.movieId === movieId);
-    if (isDuplicate) {
-      throw new Error("This movie is already bookmarked");
+    try {
+      await prisma.bookmark.create({
+        data: { userId: 'default-user', movieId },
+      });
+      toast.success('Added to bookmarks');
+    } catch (error) {
+      toast.error('Already in bookmarks');
     }
-
-    // Option 2: Max Two Bookmarks Check (comment out if using unique)
-    // if (existingBookmarks.length >= 2) {
-    //   throw new Error("Bookmark limit reached (max 2)");
-    // }
-
-    // Create bookmark if checks pass
-    await prisma.bookmark.create({
-      data: { userId, movieId },
-    });
   }
 
   return (
@@ -71,13 +61,7 @@ export default async function MovieDetails({
             </div>
             <p className="text-gray-300 mb-8 text-lg leading-relaxed">{movie.Plot}</p>
             <div className="flex gap-4 mb-8">
-              <form action={handleBookmark}>
-                <input type="hidden" name="movieId" value={movie.imdbID} />
-                <Button type="submit" className="bg-white text-black hover:bg-white/90">
-                  <BookmarkPlus className="mr-2 h-5 w-5" />
-                  Add to Bookmarks
-                </Button>
-              </form>
+              <BookmarkButton movieId={movie.imdbID} />
               <div className="flex items-center bg-gray-900 px-4 py-2 rounded">
                 <span className="text-yellow-500 font-semibold mr-2">IMDb</span>
                 <span className="font-bold">{movie.imdbRating}</span>

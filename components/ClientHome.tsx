@@ -5,6 +5,7 @@ import MovieCard from "@/components/MovieCard";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import MovieFilters from "./MovieFilters";
 
 interface Movie {
   imdbID: string;
@@ -22,9 +23,11 @@ export default function ClientHome({
   const [currentPage, setCurrentPage] = useState(1);
   const [currentSearch, setCurrentSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [displayedMovies, setDisplayedMovies] = useState<Movie[]>(movies);
 
   const handleSearch = (newMovies: Movie[], searchTerm: string) => {
     setMovies(newMovies);
+    setDisplayedMovies(newMovies);
     setCurrentSearch(searchTerm); // Save search term
     setCurrentPage(1);
   };
@@ -77,10 +80,13 @@ export default function ClientHome({
         {movies.length > 0 ? (
           <>
             <h2 className="text-2xl font-bold mb-6">
-              {currentSearch ? "Search Results" : "Popular Movies"}
+              {currentSearch
+                ? `Search Results for "${currentSearch}"`
+                : "Popular Movies"}
             </h2>
+            <MovieFilters movies={movies} onSort={setDisplayedMovies} />
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-              {movies.map((movie) => (
+              {displayedMovies.map((movie) => (
                 <Link key={movie.imdbID} href={`/movies/${movie.imdbID}`}>
                   <MovieCard movie={movie} />
                 </Link>

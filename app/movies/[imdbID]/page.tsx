@@ -7,26 +7,46 @@ const prisma = new PrismaClient();
 
 export default async function MovieDetails({
   params,
+  searchParams,
 }: {
   params: { imdbID: string };
+  searchParams: { userId?: string };
 }) {
   const movie = await fetchMovieDetails(params.imdbID);
   if (!movie) return <div>Movie not found</div>;
 
+  const userId = searchParams.userId || "default-user";
+
   async function handleBookmark(formData: FormData) {
     "use server";
     const movieId = formData.get("movieId") as string;
+
+    // Fetch existing bookmarks for this user
+    const existingBookmarks = await prisma.bookmark.findMany({
+      where: { userId },
+    });
+
+    // Option 1: Unique Movies Check
+    const isDuplicate = existingBookmarks.some((b) => b.movieId === movieId);
+    if (isDuplicate) {
+      throw new Error("This movie is already bookmarked");
+    }
+
+    // Option 2: Max Two Bookmarks Check (comment out if using unique)
+    // if (existingBookmarks.length >= 2) {
+    //   throw new Error("Bookmark limit reached (max 2)");
+    // }
+
+    // Create bookmark if checks pass
     await prisma.bookmark.create({
-      data: { userId: "default-user", movieId },
+      data: { userId, movieId },
     });
   }
 
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* Main Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Poster Column */}
           <div className="md:col-span-1">
             {movie.Poster !== "N/A" ? (
               <img
@@ -40,8 +60,6 @@ export default async function MovieDetails({
               </div>
             )}
           </div>
-
-          {/* Info Column */}
           <div className="md:col-span-2">
             <h1 className="text-4xl font-bold mb-4">{movie.Title}</h1>
             <div className="flex items-center gap-4 text-sm text-gray-300 mb-6">
@@ -51,18 +69,11 @@ export default async function MovieDetails({
               <span className="w-1 h-1 bg-gray-300 rounded-full" />
               <span>{movie.Runtime}</span>
             </div>
-
-            <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-              {movie.Plot}
-            </p>
-
+            <p className="text-gray-300 mb-8 text-lg leading-relaxed">{movie.Plot}</p>
             <div className="flex gap-4 mb-8">
               <form action={handleBookmark}>
                 <input type="hidden" name="movieId" value={movie.imdbID} />
-                <Button
-                  type="submit"
-                  className="bg-white text-black hover:bg-white/90"
-                >
+                <Button type="submit" className="bg-white text-black hover:bg-white/90">
                   <BookmarkPlus className="mr-2 h-5 w-5" />
                   Add to Bookmarks
                 </Button>
@@ -73,7 +84,6 @@ export default async function MovieDetails({
                 <span className="text-gray-400">/10</span>
               </div>
             </div>
-
             <div className="grid grid-cols-2 gap-8 mb-8">
               <div>
                 <h3 className="text-gray-400 mb-2">Director</h3>
@@ -84,7 +94,6 @@ export default async function MovieDetails({
                 <p className="text-lg">{movie.Genre}</p>
               </div>
             </div>
-
             <div className="space-y-6">
               <div>
                 <h3 className="text-gray-400 mb-2">Cast</h3>

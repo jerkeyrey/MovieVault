@@ -15,9 +15,11 @@ const Navbar = async () => {
       </Link>
 
       <div className="flex gap-4">
-        <Button className="bookmark-btn" variant="secondary">
-          Bookmarks
-        </Button>
+        <Link href="/bookmarks">
+          <Button className="bookmark-btn" variant="secondary">
+            Bookmarks
+          </Button>
+        </Link>
 
         {session ? <SignOut /> : <SignIn />}
       </div>

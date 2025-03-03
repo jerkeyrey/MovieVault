@@ -19,7 +19,8 @@ export default async function Bookmarks() {
   const session = await auth();
   console.log("Session in bookmarks:", session); // Debug log
 
-  if (!session?.user?.id) { // Ensure id exists
+  if (!session?.user?.id) {
+    // Ensure id exists
     return redirect("/api/auth/signin?callbackUrl=/bookmarks");
   }
 
@@ -62,7 +63,13 @@ export default async function Bookmarks() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
             {validMovies.map((movie) => (
-              <MovieCard key={movie.imdbID} movie={movie} /> // Remove nested Link
+              <Link
+                key={movie.imdbID}
+                href={`/movies/${movie.imdbID}`}
+                className="transition-transform hover:scale-105"
+              >
+                <MovieCard movie={movie} />
+              </Link>
             ))}
           </div>
         )}

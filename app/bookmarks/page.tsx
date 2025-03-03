@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import DeleteBookmarkButton from "@/components/DeleteBookmarkButton";
 
 export const metadata: Metadata = {
   title: "MovieVault - Bookmarks",
@@ -63,13 +64,17 @@ export default async function Bookmarks() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
             {validMovies.map((movie) => (
-              <Link
-                key={movie.imdbID}
-                href={`/movies/${movie.imdbID}`}
-                className="transition-transform hover:scale-105"
-              >
-                <MovieCard movie={movie} />
-              </Link>
+              <div key={movie.imdbID} className="relative group">
+                <DeleteBookmarkButton movieId={movie.imdbID} />
+                <Link
+                  href={`/movies/${movie.imdbID}`}
+                  className="block transition-transform duration-200 hover:scale-105"
+                >
+                  <div className="relative">
+                    <MovieCard movie={movie} />
+                  </div>
+                </Link>
+              </div>
             ))}
           </div>
         )}

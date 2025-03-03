@@ -5,7 +5,10 @@ import { auth } from "@/auth"; // Import from auth.ts
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session || !session.user?.id) {
-    return NextResponse.json({ message: "Unauthorized - Please log in" }, { status: 401 });
+    return NextResponse.json(
+      { message: "Unauthorized - Please log in" },
+      { status: 401 }
+    );
   }
 
   try {
@@ -50,7 +53,10 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session || !session.user?.id) {
-    return NextResponse.json({ message: "Unauthorized - Please log in" }, { status: 401 });
+    return NextResponse.json(
+      { message: "Unauthorized - Please log in" },
+      { status: 401 }
+    );
   }
 
   const userId = session.user.id;
@@ -58,4 +64,36 @@ export async function GET(req: NextRequest) {
     where: { userId },
   });
   return NextResponse.json(bookmarks);
+}
+
+export async function DELETE(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(req.url);
+  const movieId = searchParams.get("movieId");
+
+  if (!movieId) {
+    return NextResponse.json({ message: "Movie ID required" }, { status: 400 });
+  }
+
+  try {
+    await prisma.bookmark.delete({
+      where: {
+        userId_movieId: {
+          userId: session.user.id,
+          movieId: movieId,
+        },
+      },
+    });
+
+    return NextResponse.json({ message: "Bookmark deleted" });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Failed to delete bookmark" },
+      { status: 500 }
+    );
+  }
 }

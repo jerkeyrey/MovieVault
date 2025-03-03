@@ -5,22 +5,25 @@ import { Button } from "@/components/ui/button";
 import { BookmarkX } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: 'MovieVault - Bookmarks',
+  title: "MovieVault - Bookmarks",
   icons: {
-    icon: '/bookmark.ico', // Custom bookmark icon
+    icon: "/bookmark.ico", // Custom bookmark icon
   },
 };
 
-export default async function Bookmarks({
-  searchParams,
-}: {
-  searchParams: { userId?: string };
-}) {
-  const userId = searchParams.userId || "default-user"; // Use query param
+export default async function Bookmarks() {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/api/auth/signin?callbackUrl=/bookmarks");
+  }
+
   const bookmarks = await prisma.bookmark.findMany({
-    where: { userId },
+    where: { userId: session.user.email },
   });
 
   const movies = await Promise.all(
